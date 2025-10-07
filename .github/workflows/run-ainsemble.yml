@@ -1,8 +1,6 @@
 name: Ainsemble APK Automation
 
 on:
-  schedule:
-    - cron: "0 */4 * * *"   # runs every 4 hours
   workflow_dispatch:          # allows manual trigger
 
 jobs:
@@ -18,30 +16,28 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
-
-      - name: Run Ainsemble Automation
+        - name: Run Ainsemble Automation
         env:
           BS_USERNAME: ${{ secrets.BS_USERNAME }}
           BS_ACCESS_KEY: ${{ secrets.BS_ACCESS_KEY }}
           BS_APP_ID: ${{ secrets.BS_APP_ID }}
+          LOGIN_EMAIL: ${{ secrets.LOGIN_EMAIL }}
+          LOGIN_PASSWORD: ${{ secrets.LOGIN_PASSWORD }}
           EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
           EMAIL_TO: ${{ secrets.EMAIL_TO }}
         run: |
           python APK_new.py \
-          --mode browserstack \
-          --bs_username "$BS_USERNAME" \
-          --bs_access_key "$BS_ACCESS_KEY" \
-          --bs_app_id "$BS_APP_ID" \
-          --login_email "ranjangowda246+12@gmail.com" \
-          --login_password "Ranjangowda@246" \
-          --send_email true \
-          --email_from "$EMAIL_FROM" \
-          --email_password "$EMAIL_PASSWORD" \
-          --email_to "$EMAIL_TO"
+            --mode browserstack \
+            --bs_username "$BS_USERNAME" \
+            --bs_access_key "$BS_ACCESS_KEY" \
+            --bs_app_id "$BS_APP_ID" \
+            --login_email "$LOGIN_EMAIL" \
+            --login_password "$LOGIN_PASSWORD" \
+            --send_email true \
+            --email_from "$EMAIL_FROM" \
+            --email_password "$EMAIL_PASSWORD" \
+            --email_to "$EMAIL_TO"
 
       - name: Upload Results
         uses: actions/upload-artifact@v4
