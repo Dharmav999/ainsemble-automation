@@ -1,0 +1,50 @@
+name: Ainsemble APK Automation
+
+on:
+  schedule:
+    - cron: "0 */4 * * *"   # runs every 4 hours
+  workflow_dispatch:          # allows manual trigger
+
+jobs:
+  run-automation:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run Ainsemble Automation
+        env:
+          BS_USERNAME: ${{ secrets.BS_USERNAME }}
+          BS_ACCESS_KEY: ${{ secrets.BS_ACCESS_KEY }}
+          BS_APP_ID: ${{ secrets.BS_APP_ID }}
+          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+        run: |
+          python APK_new.py \
+          --mode browserstack \
+          --bs_username "$BS_USERNAME" \
+          --bs_access_key "$BS_ACCESS_KEY" \
+          --bs_app_id "$BS_APP_ID" \
+          --login_email "test@example.com" \
+          --login_password "Test@123" \
+          --send_email true \
+          --email_from "$EMAIL_FROM" \
+          --email_password "$EMAIL_PASSWORD" \
+          --email_to "$EMAIL_TO"
+
+      - name: Upload Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: ainsemble-results
+          path: artifacts/
