@@ -36,8 +36,8 @@ jobs:
           --bs_username "$BS_USERNAME" \
           --bs_access_key "$BS_ACCESS_KEY" \
           --bs_app_id "$BS_APP_ID" \
-          --login_email "test@example.com" \
-          --login_password "Test@123" \
+          --login_email "ranjangowda246+12@gmail.com" \
+          --login_password "Ranjangowda@246" \
           --send_email true \
           --email_from "$EMAIL_FROM" \
           --email_password "$EMAIL_PASSWORD" \
