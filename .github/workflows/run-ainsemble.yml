@@ -1,15 +1,14 @@
 name: Ainsemble APK Automation
 
-
 on:
-  workflow_dispatch:          # allows manual trigger
+  workflow_dispatch:  # Allows manual trigger only
 
 jobs:
-  run-automation:
+  run-ainsemble:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -17,7 +16,11 @@ jobs:
         with:
           python-version: "3.12"
 
-        - name: Run Ainsemble Automation
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run Ainsemble Automation
         env:
           BS_USERNAME: ${{ secrets.BS_USERNAME }}
           BS_ACCESS_KEY: ${{ secrets.BS_ACCESS_KEY }}
