@@ -1,27 +1,38 @@
-name: Ainsemble APK Automation (Extended – SignUp + OTP)
+name: Ainsemble APK Automation (Extended – SignUp + OTP + Forgot Password)
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:  # manual trigger
 
 jobs:
   run-extended:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Checkout your repo
       - name: Checkout repo
         uses: actions/checkout@v4
 
+      # Step 2: Set up Python
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      - name: Install dependencies
+      # Step 3: Install Chrome and ChromeDriver (for Selenium + Mailinator)
+      - name: Install Chrome & ChromeDriver
         run: |
           sudo apt-get update
           sudo apt-get install -y chromium-browser chromium-chromedriver
-          pip install selenium appium-python-client
+          echo "✅ Chrome and ChromeDriver installed successfully"
 
+      # Step 4: Install dependencies
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          echo "✅ Python dependencies installed successfully"
+
+      # Step 5: Run the extended Ainsemble automation
       - name: Run Extended Ainsemble Automation
         env:
           BS_USERNAME: ${{ secrets.BS_USERNAME }}
@@ -33,6 +44,7 @@ jobs:
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
           EMAIL_TO: ${{ secrets.EMAIL_TO }}
         run: |
+          echo "🚀 Starting Ainsemble extended automation..."
           python APK_extended.py \
             --mode browserstack \
             --bs_username "$BS_USERNAME" \
@@ -45,7 +57,9 @@ jobs:
             --email_from "$EMAIL_FROM" \
             --email_password "$EMAIL_PASSWORD" \
             --email_to "$EMAIL_TO"
+          echo "✅ Extended automation completed successfully"
 
+      # Step 6: Upload test results and screenshots
       - name: Upload Results
         uses: actions/upload-artifact@v4
         with:
