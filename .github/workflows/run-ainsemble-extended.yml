@@ -1,0 +1,67 @@
+name: Ainsemble APK Automation (Extended - SignUp + OTP)
+
+on:
+  workflow_dispatch:  # Allows manual trigger
+
+jobs:
+  run-ainsemble-extended:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # 🧠 Install Chrome & ChromeDriver (for Mailinator OTP web automation)
+      - name: Install Chrome and ChromeDriver
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget unzip xvfb libxi6 libgconf-2-4
+          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo apt install -y ./google-chrome-stable_current_amd64.deb
+          DRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE")
+          wget https://chromedriver.storage.googleapis.com/${DRIVER_VERSION}/chromedriver_linux64.zip
+          unzip chromedriver_linux64.zip
+          sudo mv chromedriver /usr/local/bin/
+          chmod +x /usr/local/bin/chromedriver
+          google-chrome --version
+          chromedriver --version
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install selenium appium-python-client
+
+      - name: Run Ainsemble Extended Automation
+        env:
+          BS_USERNAME: ${{ secrets.BS_USERNAME }}
+          BS_ACCESS_KEY: ${{ secrets.BS_ACCESS_KEY }}
+          BS_APP_ID: ${{ secrets.BS_APP_ID }}
+          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+        run: |
+          python APK_new.py \
+            --mode browserstack \
+            --bs_username "$BS_USERNAME" \
+            --bs_access_key "$BS_ACCESS_KEY" \
+            --bs_app_id "$BS_APP_ID" \
+            --send_email true \
+            --email_from "$EMAIL_FROM" \
+            --email_password "$EMAIL_PASSWORD" \
+            --email_to "$EMAIL_TO" \
+            --otp_mode mailinator_web \
+            --mailinator_prefix testsample \
+            --signup_password Dharma@999 \
+            --artist_name Test \
+            --artist_phone 8558404823
+
+      - name: Upload Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: ainsemble-extended-results
+          path: artifacts/
