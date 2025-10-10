@@ -1,7 +1,7 @@
-name: Ainsemble APK Automation (Extended – SignUp + OTP + Forgot Password)
+name: Ainsemble APK Automation (Full – SignUp + SignIn + Reset + OTP + Mailinator)
 
 on:
-  workflow_dispatch:  # manual trigger
+  workflow_dispatch:  # allows manual trigger
 
 jobs:
   run-extended:
@@ -18,11 +18,13 @@ jobs:
         with:
           python-version: "3.12"
 
-      # Step 3: Install Chrome and ChromeDriver (for Selenium + Mailinator)
+      # Step 3: Install Chrome & ChromeDriver
       - name: Install Chrome & ChromeDriver
         run: |
           sudo apt-get update
-          sudo apt-get install -y chromium-browser chromium-chromedriver
+          sudo apt-get install -y chromium chromium-driver
+          sudo ln -s /usr/bin/chromium /usr/bin/chromium-browser || true
+          sudo ln -s /usr/bin/chromium /usr/bin/google-chrome || true
           echo "✅ Chrome and ChromeDriver installed successfully"
 
       # Step 4: Install dependencies
@@ -32,7 +34,11 @@ jobs:
           pip install -r requirements.txt
           echo "✅ Python dependencies installed successfully"
 
-      # Step 5: Run the extended Ainsemble automation
+      # Step 5: Create artifacts directory
+      - name: Prepare Artifacts Directory
+        run: mkdir -p artifacts
+
+      # Step 6: Run the extended Ainsemble automation
       - name: Run Extended Ainsemble Automation
         env:
           BS_USERNAME: ${{ secrets.BS_USERNAME }}
@@ -45,21 +51,20 @@ jobs:
           EMAIL_TO: ${{ secrets.EMAIL_TO }}
         run: |
           echo "🚀 Starting Ainsemble extended automation..."
-          python APK_extended.py \
+          python ainsemble_final_updated.py \
             --mode browserstack \
             --bs_username "$BS_USERNAME" \
             --bs_access_key "$BS_ACCESS_KEY" \
             --bs_app_id "$BS_APP_ID" \
             --login_email "$LOGIN_EMAIL" \
             --login_password "$LOGIN_PASSWORD" \
-            --otp_mode mailinator_web \
             --send_email true \
             --email_from "$EMAIL_FROM" \
             --email_password "$EMAIL_PASSWORD" \
             --email_to "$EMAIL_TO"
           echo "✅ Extended automation completed successfully"
 
-      # Step 6: Upload test results and screenshots
+      # Step 7: Upload test results and screenshots
       - name: Upload Results
         uses: actions/upload-artifact@v4
         with:
