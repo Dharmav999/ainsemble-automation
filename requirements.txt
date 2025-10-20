@@ -1,18 +1,13 @@
-# Core libraries for Appium mobile automation
 appium-python-client==4.1.0
-
-# Selenium for Mailinator OTP extraction
 selenium==4.25.0
-
-# Utility dependencies
+webdriver-manager>=4.6.0
+Pillow>=10.0.0
+pandas>=2.1.0
+openpyxl>=3.1.2
 requests==2.32.3
 urllib3==2.2.3
-
-# Optional – CSV, email, and data handling (usually built-in but pinned for consistency)
 certifi>=2024.2.2
 charset-normalizer>=3.3.2
 idna>=3.7
-
-# Optional – helpful tools for XML/HTML parsing (used if you later add API/XPath validations)
 lxml==5.3.0
 beautifulsoup4==4.12.3
